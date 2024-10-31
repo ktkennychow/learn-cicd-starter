@@ -40,18 +40,33 @@ func TestGetAPIKey(t *testing.T) {
         },
     }
 		t.Log("Testing Auth")
+		numOfTests := len(tests)
+		failedTests := 0
 		for _, test := range tests {
-			fmt.Printf("Test - %v\n", test.name)
-			key, err:= GetAPIKey(test.headers)
-			expectedKey := test.expectedKey
-			expectedErr := test.expectedError
-			if !reflect.DeepEqual(expectedKey, key) {
-				t.Errorf("expect key: %v, got: %v", expectedKey, key)
-			}
-			if !errors.Is(expectedErr, err) {
-				t.Errorf("expect error: %v, got: %v", expectedErr, err)
-			}
-			t.Logf("Test - %v passed", test.name)
+			testName := fmt.Sprintf("Testing %v", test.name)
+			t.Run(testName, func(t * testing.T) {
+				testFailed := false
+				key, err:= GetAPIKey(test.headers)
+				expectedKey := test.expectedKey
+				expectedErr := test.expectedError
+				if !reflect.DeepEqual(expectedKey, key) {
+					testFailed = true
+					t.Errorf("expect key: %v, got: %v", expectedKey, key)
+				}
+				if !errors.Is(expectedErr, err) {
+					testFailed = true
+					t.Errorf("expect error: %v, got: %v", expectedErr, err)
+				}
+				if testFailed {
+					failedTests++
+				}
+			})
+	}
+			
+		t.Log("All tests done")
+		if failedTests == 0  {
+			t.Log("All tests passed")
+			} else {
+			t.Logf("%v of %v test(s) failed", failedTests, numOfTests)
 		}
-		t.Log("All tests passed")
 	}
