@@ -24,9 +24,6 @@ jobs:
       - name: Set up goose
         uses: mscno/setup-goose@v1
 
-      - name: Run goose
-        run: goose up
-
       - name: Build Production
         run: ./scripts/buildprod.sh
 
